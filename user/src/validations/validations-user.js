@@ -1,6 +1,7 @@
 const { param, check, validationResult } = require("express-validator")
 const bcrypt = require("bcryptjs")
 const { userModel } = require("../databases/mongodb/models/models-user")
+const mongoose = require("mongoose")
 
 const formatErrors = (req, res, next) => {
     const erros = validationResult(req)
@@ -29,6 +30,16 @@ module.exports = {
         check('password')
             .exists()
             .withMessage('Password is required'),
+        formatErrors
+    ],
+    validateGetUser: [
+        check('id')
+            .exists()
+            .withMessage('id is required')
+            .custom(async (id, { req }) => {
+                if (!mongoose.isValidObjectId(id)) return Promise.reject('id is invalid')
+            })
+        ,
         formatErrors
     ],
     validateLoginUser: [

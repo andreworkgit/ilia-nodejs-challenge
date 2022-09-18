@@ -4,21 +4,53 @@ const { userModel } = require("../databases/mongodb/models/models-user")
 const { transactionModel } = require("../databases/mongodb/models/models-transaction")
 const bcrypt = require("bcryptjs")
 const { generateToken } = require("../utils/utils-jwt")
-
-const { Request, Response } = require("express")
+const mongoose = require("mongoose")
 
 module.exports = {
-    get2: async (req, res) => res.send('hello world'),
-
-    get: async (req, res) => {
+    balance: async (req, res) => {
         try {
-            const { id } = req.params
-            const user = await userModel.findOne({ _id: id }).select('_id first_name last_name email')
+            const { user_id } = req.query
+
+            const transaction = await transactionModel.aggregate([
+                {
+                    $match: {
+                        user_id: mongoose.Types.ObjectId(user_id)
+                    }
+                }, {
+                    $group: {
+                        _id: '$type',
+                        count: { $sum: 1 },
+                        totalAmount: { $sum: '$amount' }
+                    }
+                }
+            ])
+
+            let currentBalance = 0
+            if (transaction) {
+
+                if (transaction.length === 1) {
+                    if (transaction[0]._id === 'CREDIT') {
+                        currentBalance = transaction[0].totalAmount
+                    } else if (transaction[0]._id === 'DEBIT') {
+                        currentBalance = -Math.abs(transaction[0].totalAmount)
+                    }
+                } else if (transaction.length == 2) {
+                    if (transaction[0].totalAmount > transaction[1].totalAmount) {
+                        currentBalance = transaction[0].totalAmount - transaction[1].totalAmount
+                        if (transaction[0]._id == 'DEBIT') {
+                            currentBalance = -Math.abs(currentBalance)
+                        }
+                    } else if (transaction[0].totalAmount < transaction[1].totalAmount) {
+                        currentBalance = transaction[1].totalAmount - transaction[0].totalAmount
+                        if (transaction[0]._id == 'DEBIT') {
+                            currentBalance = -Math.abs(currentBalance)
+                        }
+                    }
+                }
+            }
 
             const bodyResponse = {
-                first_name: user.first_name,
-                last_name: user.last_name,
-                email: user.email
+                amount: currentBalance
             }
 
             return res.status(200).json(bodyResponse)

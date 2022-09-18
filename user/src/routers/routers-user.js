@@ -1,5 +1,3 @@
-
-
 const { Router } = require("express")
 const {
     list: userControllerList,
@@ -7,7 +5,11 @@ const {
     create: userControllerCreate,
     login: userControllerLogin
 } = require("../controllers/controllers-user")
-const { validateCreateUser, validateLoginUser } = require("../validations/validations-user")
+const {
+    validateCreateUser,
+    validateLoginUser,
+    validateGetUser
+} = require("../validations/validations-user")
 const passport = require('passport')
 
 const router = Router()
@@ -25,6 +27,7 @@ router.route('/')
 router.route('/:id')
     .get(
         passport.authenticate('jwt', { session: false }),
+        validateGetUser,
         userControllerGet
     )
 

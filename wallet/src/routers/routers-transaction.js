@@ -1,28 +1,35 @@
-
-
 const { Router } = require("express")
 const {
+    balance: transactionControllerBalance,
     list: transactionControllerList,
     create: transactionControllerCreate
 } = require("../controllers/controllers-transaction")
-//const { validateCreateUser, validateLoginUser } = require("../validations/validations-user")
+const {
+    validateCreateTransaction,
+    validateListTransaction,
+    validateBalanceTransaction
+} = require("../validations/validations-transaction")
 const passport = require('passport')
 
 const router = Router()
 
 router.route('/')
     .get(
-        //passport.authenticate('jwt', { session: false }),
+        passport.authenticate('jwt', { session: false }),
+        validateListTransaction,
         transactionControllerList
     )
     .post(
-        //validateCreateUser,
+        passport.authenticate('jwt', { session: false }),
+        validateCreateTransaction,
         transactionControllerCreate
     )
 
 router.route('/balance')
     .get(
-        transactionControllerList
+        passport.authenticate('jwt', { session: false }),
+        validateBalanceTransaction,
+        transactionControllerBalance
     )
 
 module.exports.transactionRouters = router

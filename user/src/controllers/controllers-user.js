@@ -3,11 +3,7 @@ const { userModel } = require("../databases/mongodb/models/models-user")
 const bcrypt = require("bcryptjs")
 const { generateToken } = require("../utils/utils-jwt")
 
-const { Request, Response } = require("express")
-
 module.exports = {
-    get2: async (req, res) => res.send('hello world'),
-
     get: async (req, res) => {
         try {
             const { id } = req.params
