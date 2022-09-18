@@ -32,4 +32,4 @@ mongoose.connect(process.env.URL_MONGODB, { useNewUrlParser: true, useUnifiedTop
 
 
 const portApp = process.env.PORT || 3002;
-app.listen(portApp, () => console.log(`Server (USER) running on port ${portApp}`))
+app.listen(portApp, () => console.log(`Server (WALLET) running on port ${portApp}`))

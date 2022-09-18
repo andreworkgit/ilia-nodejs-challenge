@@ -1,0 +1,43 @@
+version: '3.9'
+services:
+  user-mongo:
+    image: mongo:latest
+    restart: unless-stopped
+    ports:
+      - 27017:27017
+    volumes:
+      - dbdata-volume:/data/db
+    environment:
+        MONGO_INITDB_DATABASE: test1
+    networks: 
+      - test-bridge
+  
+  user-app:
+    build: .
+    restart: always
+    ports: 
+      - 3002:3002
+    environment:
+      - URL_MONGODB=$URL_MONGODB
+      - JWT_SECRET=$JWT_SECRET
+      - PORT=$PORT
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    depends_on:
+      - user-mongo
+    links:
+      - user-mongo
+    networks: 
+      - test-bridge
+    
+volumes:
+  dbdata-volume:
+
+networks:
+  test-bridge:
+    external: true
+
+    
+
+  
