@@ -28,10 +28,10 @@ module.exports = {
             let currentBalance = 0
             if (transaction) {
 
-                if (transaction.length === 1) {
-                    if (transaction[0]._id === 'CREDIT') {
+                if (transaction.length == 1) {
+                    if (transaction[0]._id == 'CREDIT') {
                         currentBalance = transaction[0].totalAmount
-                    } else if (transaction[0]._id === 'DEBIT') {
+                    } else if (transaction[0]._id == 'DEBIT') {
                         currentBalance = -Math.abs(transaction[0].totalAmount)
                     }
                 } else if (transaction.length == 2) {
@@ -61,7 +61,6 @@ module.exports = {
     list: async (req, res) => {
         try {
             const { type } = req.query
-            console.log(type)
             const users = await transactionModel.find({ type }).select('_id user_id amount type')
             return res.status(200).json({ docs: users })
         } catch (err) {

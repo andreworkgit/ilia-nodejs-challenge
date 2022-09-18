@@ -2,20 +2,12 @@ const express = require('express')
 const mongoose = require('mongoose')
 const router = require('./routers/routers')
 require('dotenv').config()
-const cors = require('cors');
 const bodyParser = require('body-parser');
 const passport = require('passport');
 
 const app = express()
 
 //app.get('/', (req, res) => res.send('hello world'))
-
-app.use(cors({
-    origin: true,
-    methods: ['GET', 'POST'],
-    optionsSuccessStatus: 200,
-    allowedHeaders: ['Content-Type', 'Authorization']
-}));
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));

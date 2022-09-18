@@ -1,14 +1,13 @@
 version: '3.9'
 services:
   db-mongo:
-    image: mongo:latest
-    restart: unless-stopped
+    image: mongo
     ports:
       - 27017:27017
     volumes:
-      - dbdata-volume:/data/db\
+      - /data/db
     networks: 
-      - test-bridge
+      - mongo-compose-network
   
   user-app:
     build: .
@@ -27,14 +26,12 @@ services:
     links:
       - db-mongo
     networks: 
-      - test-bridge
-    
-volumes:
-  dbdata-volume:
+      - mongo-compose-network
+
 
 networks:
-  test-bridge:
-    external: true
+  mongo-compose-network:
+    driver: bridge
 
     
 
